@@ -1,0 +1,34 @@
+name: Build APK
+
+on:
+  repository_dispatch:
+    types: [build_apk]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Java and Android SDK
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-11-jdk unzip
+
+      - name: Download and Unzip ZIP File
+        run: |
+          mkdir source
+          unzip site/$ZIP_FILE -d source
+
+      - name: Build APK
+        run: |
+          cd source
+          ./gradlew assembleRelease || echo "הקומפילציה נכשלה"
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: compiled-apk
+          path: source/app/build/outputs/apk/release/*.apk
