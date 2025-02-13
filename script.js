@@ -8,18 +8,16 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
 
     document.getElementById('status').innerText = '⌛ מעלה ומפעיל קומפילציה...';
 
-    const repoOwner = 'שם_המשתמש_בגיטהב';
-    const repoName = 'my-apk-builder';
-    const githubToken = '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'; // יש ליצור PAT בגיטהב (ללא שיתוף!)
-
-    const formData = new FormData();
-    formData.append('file', file);
+    const repoOwner = 'שם_המשתמש_בגיטהב'; // החלף לשם המשתמש שלך
+    const repoName = 'my-apk-builder';    // החלף לשם הריפו שלך
+    const githubToken = 'XXXX'; // הכנס PAT תקין
 
     const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/dispatches`, {
         method: 'POST',
         headers: {
-            'Authorization': `token ${githubToken}`,
-            'Accept': 'application/vnd.github.v3+json'
+            'Authorization': `Bearer ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json`,
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             event_type: 'build_apk',
@@ -32,6 +30,7 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
     if (response.ok) {
         document.getElementById('status').innerText = '✅ קובץ הועבר לקומפילציה בהצלחה!';
     } else {
-        document.getElementById('status').innerText = '❌ שגיאה בשליחה לגיטהב.';
+        const errorText = await response.text();
+        document.getElementById('status').innerText = `❌ שגיאה: ${errorText}`;
     }
 });
