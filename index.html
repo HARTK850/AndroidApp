@@ -3,19 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>יצירת פרויקט אנדרואיד</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <title>העלאת קובץ ZIP והמרה ל-APK</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background: linear-gradient(135deg, #6e45e2, #88d3ce);
+            color: white;
+        }
+        form {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        input[type="file"] {
+            margin: 20px 0;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #ddd;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔧 יצירת פרויקט אנדרואיד</h1>
-        <button onclick="showPopup('מתחיל תהליך יצירת הפרויקט...')">🔨 התחל יצירה</button>
-    </div>
+    <h1>העלאת קובץ ZIP והמרתו ל-APK</h1>
 
-    <div class="popup" id="popup">
-        <span id="popup-text"></span>
-        <button onclick="closePopup()">סגור</button>
-    </div>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".zip" required>
+        <br>
+        <button type="submit">העלה והמר לקובץ APK</button>
+    </form>
 </body>
 </html>
