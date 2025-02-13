@@ -1,51 +1,58 @@
-from flask import Flask, request, send_file, render_template
 import os
 import zipfile
 import subprocess
+from flask import Flask, request, send_file, jsonify
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
-BUILD_FOLDER = 'build'
+UPLOAD_FOLDER = "uploads"
+OUTPUT_FOLDER = "output"
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(BUILD_FOLDER, exist_ok=True)
-
-@app.route('/')
-def index():
-    return render_template('index.html')
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
-        return "לא נבחר קובץ", 400
+        return jsonify({'error': 'No file provided'}), 400
 
     file = request.files['file']
     if file.filename == '':
-        return "שם קובץ ריק", 400
+        return jsonify({'error': 'No file selected'}), 400
 
-    if file and file.filename.endswith('.zip'):
-        zip_path = os.path.join(UPLOAD_FOLDER, file.filename)
-        file.save(zip_path)
+    zip_path = os.path.join(UPLOAD_FOLDER, file.filename)
+    file.save(zip_path)
 
-        # חילוץ הקובץ
+    extract_path = os.path.join(UPLOAD_FOLDER, "extracted")
+    os.makedirs(extract_path, exist_ok=True)
+
+    try:
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(BUILD_FOLDER)
+            zip_ref.extractall(extract_path)
+    except zipfile.BadZipFile:
+        return jsonify({'error': 'Invalid ZIP file'}), 400
 
-        # בניית APK
-        build_command = f'cd {BUILD_FOLDER} && ./gradlew assembleDebug'
-        result = subprocess.run(build_command, shell=True, capture_output=True, text=True)
+    apk_output_path = os.path.join(OUTPUT_FOLDER, "app.apk")
+    
+    # הרצת קימפול (יש להחליף בפקודה המתאימה לפרויקט שלך)
+    compile_command = f"cd {extract_path} && ./gradlew assembleDebug"
+    process = subprocess.Popen(compile_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        if result.returncode != 0:
-            return f"שגיאה בבנייה: {result.stderr}", 500
+    for line in process.stdout:
+        print(line.decode(), end="")  # הדפסת התקדמות לקונסולה
 
-        apk_path = os.path.join(BUILD_FOLDER, 'app/build/outputs/apk/debug/app-debug.apk')
-        if os.path.exists(apk_path):
-            return send_file(apk_path, as_attachment=True)
-        else:
-            return "ה-APK לא נוצר", 500
+    process.wait()
 
-    return "הועלה קובץ לא חוקי", 400
+    if process.returncode != 0:
+        return jsonify({'error': 'Compilation failed'}), 500
 
+    # העתקת קובץ ה-APK למקום שניתן להורדה
+    apk_source = os.path.join(extract_path, "AndroidApp/app-debug.apk")
+    if not os.path.exists(apk_source):
+        return jsonify({'error': 'APK file not found'}), 500
+
+    os.rename(apk_source, apk_output_path)
+
+    return send_file(apk_output_path, as_attachment=True, download_name="app.apk")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
