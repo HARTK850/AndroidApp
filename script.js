@@ -8,9 +8,9 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
 
     document.getElementById('status').innerText = '⌛ מעלה ומפעיל קומפילציה...';
 
-    const repoOwner = 'שם_המשתמש_בגיטהב'; // החלף לשם המשתמש שלך
-    const repoName = 'my-apk-builder';    // החלף לשם הריפו שלך
-    const githubToken = 'XXXX'; // הכנס PAT תקין
+    const repoOwner = 'HARTK850';
+    const repoName = 'AndroidApp';    // החלף לשם הריפו שלך
+    const githubToken = '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'; // הכנס PAT תקין
 
     const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/dispatches`, {
         method: 'POST',
