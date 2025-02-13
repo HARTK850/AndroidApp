@@ -10,7 +10,7 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
 
     const repoOwner = 'שם_המשתמש_בגיטהב';
     const repoName = 'my-apk-builder';
-    const githubToken = 'XXXX'; // יש ליצור PAT בגיטהב (ללא שיתוף!)
+    const githubToken = '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'; // יש ליצור PAT בגיטהב (ללא שיתוף!)
 
     const formData = new FormData();
     formData.append('file', file);
