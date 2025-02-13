@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>העלאה והמרה ל-APK</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>העלאת קובץ והמרתו ל-APK</h1>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" id="file-input" accept=".zip" required>
+            <button type="submit">העלה והמר לקובץ APK</button>
+        </form>
+        <div id="progress-container" style="display: none;">
+            <p>התקדמות: <span id="progress-percentage">0%</span></p>
+            <progress id="progress-bar" value="0" max="100"></progress>
+        </div>
+        <div id="download-container" style="display: none;">
+            <p>ההמרה הושלמה! <a id="download-link" href="#">הורד את קובץ ה-APK</a></p>
+        </div>
+    </div>
+    <script src="upload.js"></script>
+</body>
+</html>
