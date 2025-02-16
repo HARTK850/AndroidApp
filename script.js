@@ -11,7 +11,7 @@ function uploadZip() {
     const formData = new FormData();
     formData.append('file', file);
 
-    fetch('https://your-backend-server.com/upload', {
+    fetch('https://androidapp-1.onrender.com', {
         method: 'POST',
         body: formData
     })
